@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document Search</title>
+
+    <!-- Font Awesome for Icon -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background: #f9f9f9;
+      }
+
+      /* Floating search icon button */
+      .search-icon-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+      }
+
+      .search-icon-btn:hover {
+        transform: scale(1.1);
+      }
+
+      /* Hidden form container */
+      .search-form-container {
+        position: fixed;
+        bottom: 90px;
+        right: 20px;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        display: none;
+        width: 300px;
+        transition: all 0.3s ease-in-out;
+        z-index: 1000;
+      }
+
+      .search-form-container.show {
+        display: block;
+      }
+
+      .search-form-container input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+      }
+
+      .search-form-container button.search-btn {
+        width: 100%;
+        padding: 8px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 10px;
+      }
+
+      .search-form-container button.search-btn:hover {
+        background: #0056b3;
+      }
+
+      /* Keyword options container */
+      .keyword-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      /* Individual keyword button */
+      .keyword-btn {
+        flex: 1 1 calc(50% - 8px);
+        background: #f0f8ff;
+        color: #007bff;
+        border: 1px solid #007bff;
+        padding: 8px;
+        border-radius: 6px;
+        text-align: center;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .keyword-btn:hover {
+        background: #007bff;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Result box inside popup */
+      #result {
+        margin-top: 10px;
+        padding: 10px;
+        background: #f1f1f1;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+        word-break: break-word;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Document Search</h1>
+
+    <!-- Floating Icon Button -->
+    <button class="search-icon-btn" onclick="toggleSearchForm()">
+      <i class="fas fa-search"></i>
+    </button>
+
+    <!-- Hidden Search Form -->
+    <div class="search-form-container" id="searchFormContainer">
+      <input type="text" id="searchInput" placeholder="Enter keyword..." />
+      <button class="search-btn" onclick="searchDocument()">Search</button>
+
+      <!-- Keyword Buttons -->
+      <div class="keyword-options">
+        <div
+          class="keyword-btn"
+          onclick="searchByKeyword('Marketing & objective')"
+        >
+          Marketing & Objective
+        </div>
+        <div
+          class="keyword-btn"
+          onclick="searchByKeyword('Objective & Design')"
+        >
+          Objective & Design
+        </div>
+        <div class="keyword-btn" onclick="searchByKeyword('Objective quality')">
+          Objective Quality
+        </div>
+        <div
+          class="keyword-btn"
+          onclick="searchByKeyword('Objective material')"
+        >
+          Objective Material
+        </div>
+        <div class="keyword-btn" onclick="searchByKeyword('Objective Store')">
+          Objective Store
+        </div>
+        <div class="keyword-btn" onclick="searchByKeyword('Objectives HRD')">
+          Objectives HRD
+        </div>
+      </div>
+
+      <!-- Result will now appear here inside the popup -->
+      <div id="result"></div>
+    </div>
+
+    <script src="data.js"></script>
+    <script>
+      // Toggle form visibility
+      function toggleSearchForm() {
+        const form = document.getElementById("searchFormContainer");
+        form.classList.toggle("show");
+      }
+
+      // Standard search by typing
+      function searchDocument() {
+        const input = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        showResult(input);
+      }
+
+      // Search triggered by clicking a keyword button
+      function searchByKeyword(keyword) {
+        document.getElementById("searchInput").value = keyword; // auto-fill input
+        showResult(keyword.toLowerCase());
+      }
+
+      // Main logic to find and display result
+      function showResult(searchTerm) {
+        const resultDiv = document.getElementById("result");
+
+        const found = documents.find(
+          (doc) => doc.keyword.toLowerCase() === searchTerm
+        );
+
+        if (found) {
+          resultDiv.innerHTML = `
+            ${found.outputText}: 
+            <a href="${found.link}" target="_blank">${found.link}</a>
+          `;
+        } else {
+          resultDiv.innerHTML = "No document found for this keyword.";
+        }
+      }
+    </script>
+  </body>
+</html>
