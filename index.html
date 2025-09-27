@@ -5,140 +5,204 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document Search</title>
 
-    <!-- Font Awesome for Icon -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
 
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        background: #f9f9f9;
+      :root {
+        --primary-color: #4a90e2; /* A modern blue */
+        --secondary-color: #50e3c2; /* A nice accent for hover */
+        --background-color: #eef2f7; /* Soft light-blue/gray */
+        --card-background: #ffffff;
+        --text-color: #333333;
+        --border-radius: 12px;
+        --shadow-elevation: 0 6px 15px rgba(0, 0, 0, 0.1);
       }
 
-      /* Floating search icon button */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        padding: 0;
+        margin: 0;
+        background: var(--background-color);
+        /* Ensure the body takes full viewport height even without content */
+        min-height: 100vh;
+        color: var(--text-color);
+      }
+
+      /* Main content wrapper is no longer strictly needed but kept for structure */
+      .main-content-wrapper {
+        padding: 20px;
+        max-width: 400px;
+        width: 100%;
+      }
+
+      /* --- Floating search icon button --- */
       .search-icon-btn {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #007bff;
+        bottom: 30px;
+        right: 30px;
+        background-color: var(--primary-color);
         color: white;
         border: none;
         border-radius: 50%;
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
+        width: 65px;
+        height: 65px;
+        font-size: 28px;
         display: flex;
         justify-content: center;
         align-items: center;
         cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        transition: transform 0.3s ease;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 1000;
+        outline: none;
       }
 
       .search-icon-btn:hover {
-        transform: scale(1.1);
+        background-color: #3b7ad6;
+        transform: translateY(-2px);
       }
 
-      /* Hidden form container */
+      .search-icon-btn:active {
+        transform: scale(0.95);
+      }
+
+      /* --- Hidden form container (The Popup/Card) --- */
       .search-form-container {
         position: fixed;
-        bottom: 90px;
-        right: 20px;
-        background: white;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        bottom: 110px;
+        right: 30px;
+        background: var(--card-background);
+        padding: 20px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-elevation);
         display: none;
-        width: 300px;
-        transition: all 0.3s ease-in-out;
+        width: 320px;
+        transition: all 0.4s ease-in-out;
         z-index: 1000;
+        opacity: 0;
+        transform: translateY(20px) scale(0.98);
+        transform-origin: bottom right;
       }
 
       .search-form-container.show {
         display: block;
+        opacity: 1;
+        transform: translateY(0) scale(1);
       }
 
+      /* --- Input Field --- */
       .search-form-container input {
         width: 100%;
-        padding: 8px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 10px;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+        font-size: 16px;
+        transition: border-color 0.3s;
       }
 
+      .search-form-container input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+      }
+
+      /* --- Search Button --- */
       .search-form-container button.search-btn {
         width: 100%;
-        padding: 8px;
-        background: #007bff;
+        padding: 12px;
+        background: var(--primary-color);
         color: white;
         border: none;
-        border-radius: 5px;
+        border-radius: 8px;
         cursor: pointer;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+        font-size: 16px;
+        font-weight: bold;
+        transition: background 0.3s ease;
       }
 
       .search-form-container button.search-btn:hover {
-        background: #0056b3;
+        background: #3b7ad6;
       }
 
-      /* Keyword options container */
+      /* --- Keyword options container --- */
       .keyword-options {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 15px;
       }
 
-      /* Individual keyword button */
+      /* --- Individual keyword button (Sleek Tags/Chips) --- */
       .keyword-btn {
-        flex: 1 1 calc(50% - 8px);
-        background: #f0f8ff;
-        color: #007bff;
-        border: 1px solid #007bff;
-        padding: 8px;
-        border-radius: 6px;
+        background: #f7f9fc;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        padding: 6px 12px;
+        border-radius: 20px;
         text-align: center;
-        font-size: 14px;
+        font-size: 13px;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
+        white-space: nowrap;
       }
 
       .keyword-btn:hover {
-        background: #007bff;
+        background: var(--primary-color);
         color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
-      /* Result box inside popup */
+      /* --- Result box inside popup --- */
       #result {
-        margin-top: 10px;
-        padding: 10px;
-        background: #f1f1f1;
-        border: 1px solid #ddd;
-        border-radius: 5px;
+        padding: 15px;
+        background: #f0f8ff;
+        border: 1px solid #cfe2ff;
+        border-radius: 8px;
         font-size: 14px;
+        line-height: 1.5;
         word-break: break-word;
+      }
+
+      #result a {
+        color: #004085;
+        font-weight: bold;
+        text-decoration: none;
+        display: block;
+        margin-top: 5px;
+      }
+
+      #result a:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
   <body>
+    <div class="main-content-wrapper"></div>
 
-    <!-- Floating Icon Button -->
     <button class="search-icon-btn" onclick="toggleSearchForm()">
       <i class="fas fa-search"></i>
     </button>
 
-    <!-- Hidden Search Form -->
     <div class="search-form-container" id="searchFormContainer">
-      <input type="text" id="searchInput" placeholder="Enter keyword..." />
-      <button class="search-btn" onclick="searchDocument()">Search</button>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Enter document keyword..."
+      />
+      <button class="search-btn" onclick="searchDocument()">
+        Search Document
+      </button>
 
-      <!-- Keyword Buttons -->
       <div class="keyword-options">
         <div
           class="keyword-btn"
@@ -169,50 +233,74 @@
         </div>
       </div>
 
-      <!-- Result will now appear here inside the popup -->
-      <div id="result"></div>
+      <div id="result">
+        Search for a document keyword or click an option above.
+      </div>
     </div>
 
     <script src="data.js"></script>
     <script>
+      // NOTE: This script assumes a global 'documents' array is defined in data.js
+
       // Toggle form visibility
       function toggleSearchForm() {
         const form = document.getElementById("searchFormContainer");
         form.classList.toggle("show");
+        // Clear input and result when closing for a clean start next time
+        if (!form.classList.contains("show")) {
+          document.getElementById("searchInput").value = "";
+          document.getElementById("result").innerHTML =
+            "Search for a document keyword or click an option above.";
+        }
       }
 
       // Standard search by typing
       function searchDocument() {
         const input = document
           .getElementById("searchInput")
-          .value.toLowerCase();
+          .value.toLowerCase()
+          .trim();
         showResult(input);
       }
 
       // Search triggered by clicking a keyword button
       function searchByKeyword(keyword) {
         document.getElementById("searchInput").value = keyword; // auto-fill input
-        showResult(keyword.toLowerCase());
+        showResult(keyword.toLowerCase().trim());
       }
 
       // Main logic to find and display result
       function showResult(searchTerm) {
         const resultDiv = document.getElementById("result");
 
+        // Handle empty search term
+        if (!searchTerm) {
+          resultDiv.innerHTML = `<span style="color: #856404;">Please enter a keyword to search.</span>`;
+          return;
+        }
+
+        // Use trim() for case-insensitive and space-robust matching
         const found = documents.find(
-          (doc) => doc.keyword.toLowerCase() === searchTerm
+          (doc) => doc.keyword.toLowerCase().trim() === searchTerm
         );
 
         if (found) {
           resultDiv.innerHTML = `
-            ${found.outputText}: 
+            <strong>HERE IS YOUR DOCUMENT LINK:</strong> 
             <a href="${found.link}" target="_blank">${found.link}</a>
           `;
         } else {
-          resultDiv.innerHTML = "No document found for this keyword.";
+          resultDiv.innerHTML = `<span style="color: #721c24;">No document found for the keyword: "${searchTerm}".</span>`;
         }
       }
+
+      // Initial state of the result div
+      document.addEventListener("DOMContentLoaded", () => {
+        // Assuming 'documents' is available from data.js
+        // Set an informative initial message
+        document.getElementById("result").innerHTML =
+          "Search for a document keyword or click an option above.";
+      });
     </script>
   </body>
 </html>
-
