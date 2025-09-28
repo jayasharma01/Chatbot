@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document Search</title>
+    <title>Smart Document Search Widget</title>
 
     <link
       rel="stylesheet"
@@ -12,65 +12,105 @@
 
     <style>
       :root {
-        --primary-color: #4a90e2; /* A modern blue */
-        --secondary-color: #50e3c2; /* A nice accent for hover */
-        --background-color: #eef2f7; /* Soft light-blue/gray */
+        --primary-color: #007bff; /* Brighter Blue */
+        --background-color: #f7f9fc; /* Lighter background */
         --card-background: #ffffff;
-        --text-color: #333333;
-        --border-radius: 12px;
-        --shadow-elevation: 0 6px 15px rgba(0, 0, 0, 0.1);
+        --text-color: #333;
+        --border-radius: 16px; /* Slightly larger radius */
+        --shadow-elevation: 0 10px 30px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+        --success-bg: #d4edda;
+        --success-border: #c3e6cb;
+        --success-text: #155724;
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-        padding: 0;
         margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         background: var(--background-color);
-        /* Ensure the body takes full viewport height even without content */
-        min-height: 100vh;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
         color: var(--text-color);
       }
 
-      /* Main content wrapper is no longer strictly needed but kept for structure */
-      .main-content-wrapper {
-        padding: 20px;
-        max-width: 400px;
-        width: 100%;
+      /* Centered intro text */
+      .center-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
       }
 
-      /* --- Floating search icon button --- */
-      .search-icon-btn {
+      .center-text h1 {
+        font-size: 40px;
+        margin-bottom: 10px;
+        color: var(--primary-color);
+        font-weight: 600;
+      }
+
+      .center-text p {
+        font-size: 18px;
+        color: #666;
+      }
+
+      /* Container for the button and its prompt text */
+      .floating-widget-container {
         position: fixed;
         bottom: 30px;
         right: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+      }
+
+      /* Styling for the text prompt */
+      .search-prompt {
+        background-color: var(--card-background);
+        color: var(--text-color);
+        padding: 10px 15px;
+        border-radius: 25px; /* Rounded pill shape */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        font-size: 15px;
+        font-weight: 500;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        transform-origin: right;
+        white-space: nowrap; /* Prevent text from wrapping */
+      }
+
+      /* Floating search icon button */
+      .search-icon-btn {
         background-color: var(--primary-color);
         color: white;
         border: none;
         border-radius: 50%;
         width: 65px;
         height: 65px;
-        font-size: 28px;
+        font-size: 26px;
         display: flex;
         justify-content: center;
         align-items: center;
         cursor: pointer;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 8px 15px rgba(0, 123, 255, 0.4);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
         z-index: 1000;
-        outline: none;
+      }
+
+      /* Hover effect: Hide the prompt when hovering near the button */
+      .floating-widget-container:hover .search-prompt {
+        opacity: 0;
+        transform: scale(0.9);
       }
 
       .search-icon-btn:hover {
-        background-color: #3b7ad6;
-        transform: translateY(-2px);
+        transform: scale(1.1);
+        box-shadow: 0 10px 20px rgba(0, 123, 255, 0.6);
       }
 
-      .search-icon-btn:active {
-        transform: scale(0.95);
-      }
-
-      /* --- Hidden form container (The Popup/Card) --- */
+      /* Hidden popup form */
       .search-form-container {
         position: fixed;
         bottom: 110px;
@@ -80,181 +120,211 @@
         border-radius: var(--border-radius);
         box-shadow: var(--shadow-elevation);
         display: none;
-        width: 320px;
-        transition: all 0.4s ease-in-out;
+        width: 340px;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         z-index: 1000;
         opacity: 0;
-        transform: translateY(20px) scale(0.98);
-        transform-origin: bottom right;
+        transform: translateY(20px);
       }
 
       .search-form-container.show {
         display: block;
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
       }
 
-      /* --- Input Field --- */
       .search-form-container input {
         width: 100%;
-        padding: 12px 15px;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
+        padding: 12px;
         margin-bottom: 15px;
-        box-sizing: border-box;
+        border-radius: 8px;
+        border: 1px solid #ddd;
         font-size: 16px;
-        transition: border-color 0.3s;
+        box-sizing: border-box;
       }
 
-      .search-form-container input:focus {
-        border-color: var(--primary-color);
-        outline: none;
-        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-      }
-
-      /* --- Search Button --- */
       .search-form-container button.search-btn {
         width: 100%;
         padding: 12px;
-        background: var(--primary-color);
+        background-color: var(--primary-color);
         color: white;
         border: none;
         border-radius: 8px;
         cursor: pointer;
         margin-bottom: 15px;
-        font-size: 16px;
+        font-size: 17px;
         font-weight: bold;
-        transition: background 0.3s ease;
+        transition: background-color 0.2s ease;
       }
 
       .search-form-container button.search-btn:hover {
-        background: #3b7ad6;
+        background-color: #0056b3;
       }
 
-      /* --- Keyword options container --- */
-      .keyword-options {
+      /* Option buttons */
+      .option-buttons {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 10px;
         margin-bottom: 15px;
-        border-top: 1px solid #f0f0f0;
-        padding-top: 15px;
       }
 
-      /* --- Individual keyword button (Sleek Tags/Chips) --- */
-      .keyword-btn {
-        background: #f7f9fc;
-        color: var(--primary-color);
-        border: 1px solid var(--primary-color);
-        padding: 6px 12px;
+      .option-buttons button {
+        flex: 1 1 calc(50% - 5px);
+        padding: 8px 10px;
+        font-size: 14px;
         border-radius: 20px;
-        text-align: center;
-        font-size: 13px;
+        border: 1px solid var(--primary-color);
+        background: white;
+        color: var(--primary-color);
         cursor: pointer;
-        transition: all 0.2s ease;
-        white-space: nowrap;
+        transition: 0.2s ease;
       }
 
-      .keyword-btn:hover {
-        background: var(--primary-color);
+      .option-buttons button:hover {
+        background-color: var(--primary-color);
         color: white;
         transform: translateY(-1px);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
-      /* --- Result box inside popup --- */
+      /* Result box - Success style for link */
       #result {
         padding: 15px;
-        background: #f0f8ff;
-        border: 1px solid #cfe2ff;
+        background: #fff3cd; /* Initial/Neutral background */
+        border: 1px solid #ffeeba;
         border-radius: 8px;
-        font-size: 14px;
-        line-height: 1.5;
+        font-size: 15px;
         word-break: break-word;
+        text-align: left;
+        color: #856404;
+        line-height: 1.4;
+      }
+
+      #result.success {
+        background: var(--success-bg);
+        border: 1px solid var(--success-border);
+        color: var(--success-text);
+      }
+
+      #result.error {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
       }
 
       #result a {
-        color: #004085;
-        font-weight: bold;
-        text-decoration: none;
         display: block;
-        margin-top: 5px;
+        margin-top: 8px;
+        color: #0056b3; /* Darker blue for links */
+        font-weight: bold;
+        text-decoration: underline;
+        word-break: break-all;
       }
 
-      #result a:hover {
-        text-decoration: underline;
+      #result.success a {
+        color: #0056b3; /* Use a standard link color for visibility even on green */
       }
     </style>
   </head>
   <body>
-    <div class="main-content-wrapper"></div>
+    <div class="center-text">
+      <h1>Smart ChatBot</h1>
+      <p>Quickly access files with a simple search.</p>
+    </div>
 
-    <button class="search-icon-btn" onclick="toggleSearchForm()">
-      <i class="fas fa-search"></i>
-    </button>
+    <div class="floating-widget-container">
+      <div class="search-prompt">Hi, how can I help you?</div>
+
+      <button class="search-icon-btn" onclick="toggleSearchForm()">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
 
     <div class="search-form-container" id="searchFormContainer">
       <input
         type="text"
         id="searchInput"
-        placeholder="Enter document keyword..."
+        placeholder="Type keyword, e.g., 'design' or 'HRD'..."
       />
       <button class="search-btn" onclick="searchDocument()">
-        Search Document
+        <i class="fas fa-file-search"></i> Search Document
       </button>
 
-      <div class="keyword-options">
-        <div
-          class="keyword-btn"
-          onclick="searchByKeyword('Marketing & objective')"
-        >
+      <div class="option-buttons">
+        <button onclick="selectKeyword('Marketing & Objective')">
           Marketing & Objective
-        </div>
-        <div
-          class="keyword-btn"
-          onclick="searchByKeyword('Objective & Design')"
-        >
+        </button>
+        <button onclick="selectKeyword('Objective & Design')">
           Objective & Design
-        </div>
-        <div class="keyword-btn" onclick="searchByKeyword('Objective quality')">
+        </button>
+        <button onclick="selectKeyword('Objective Quality')">
           Objective Quality
-        </div>
-        <div
-          class="keyword-btn"
-          onclick="searchByKeyword('Objective material')"
-        >
+        </button>
+        <button onclick="selectKeyword('Objective Material')">
           Objective Material
-        </div>
-        <div class="keyword-btn" onclick="searchByKeyword('Objective Store')">
+        </button>
+        <button onclick="selectKeyword('Objective Store')">
           Objective Store
-        </div>
-        <div class="keyword-btn" onclick="searchByKeyword('Objectives HRD')">
+        </button>
+        <button onclick="selectKeyword('Objectives HRD')">
           Objectives HRD
-        </div>
+        </button>
       </div>
 
       <div id="result">
-        Search for a document keyword or click an option above.
+        Start by typing a keyword or selecting an option above.
       </div>
     </div>
 
-    <script src="data.js"></script>
     <script>
-      // NOTE: This script assumes a global 'documents' array is defined in data.js
+      // DUMMY documents array - Replace this with your actual data source (e.g., from data.js)
+      const documents = [
+        {
+          keyword: "Marketing & Objective",
+          link: "https://drive.google.com/file/d/1myTwnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
+        },
+        {
+          keyword: "Objective & Design",
+          link: "https://drive.google.com/file/d/2a2Twnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
+        },
+        {
+          keyword: "Objective Quality",
+          link: "https://drive.google.com/file/d/3b3Twnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
+        },
+        {
+          keyword: "Objective Material",
+          link: "https://drive.google.com/file/d/4c4Twnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
+        },
+        {
+          keyword: "Objective Store",
+          link: "https://drive.google.com/file/d/1myTwnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
+        },
+        {
+          keyword: "Objectives HRD",
+          link: "https://drive.google.com/file/d/6f6Twnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
+        },
+      ];
 
-      // Toggle form visibility
+      /**
+       * Toggle form visibility
+       */
       function toggleSearchForm() {
         const form = document.getElementById("searchFormContainer");
         form.classList.toggle("show");
-        // Clear input and result when closing for a clean start next time
         if (!form.classList.contains("show")) {
+          // Reset form and result on close
           document.getElementById("searchInput").value = "";
-          document.getElementById("result").innerHTML =
-            "Search for a document keyword or click an option above.";
+          const resultDiv = document.getElementById("result");
+          resultDiv.innerHTML =
+            "Start by typing a keyword or selecting an option above.";
+          resultDiv.className = ""; // Remove success/error classes
         }
       }
 
-      // Standard search by typing
+      /**
+       * Search using input field value
+       */
       function searchDocument() {
         const input = document
           .getElementById("searchInput")
@@ -263,44 +333,45 @@
         showResult(input);
       }
 
-      // Search triggered by clicking a keyword button
-      function searchByKeyword(keyword) {
-        document.getElementById("searchInput").value = keyword; // auto-fill input
+      /**
+       * Search using option button value
+       */
+      function selectKeyword(keyword) {
+        document.getElementById("searchInput").value = keyword;
         showResult(keyword.toLowerCase().trim());
       }
 
-      // Main logic to find and display result
+      /**
+       * Display search results with flexible matching logic
+       */
       function showResult(searchTerm) {
         const resultDiv = document.getElementById("result");
+        resultDiv.className = ""; // Reset classes
 
-        // Handle empty search term
         if (!searchTerm) {
-          resultDiv.innerHTML = `<span style="color: #856404;">Please enter a keyword to search.</span>`;
+          resultDiv.innerHTML = "🚫 **Please enter a keyword to search.**";
+          resultDiv.classList.add("error");
           return;
         }
 
-        // Use trim() for case-insensitive and space-robust matching
-        const found = documents.find(
-          (doc) => doc.keyword.toLowerCase().trim() === searchTerm
+        // FLEXIBLE SEARCH LOGIC: Check if the document keyword includes the search term,
+        // OR if the search term includes the document keyword (in case of partial match)
+        const foundDocument = documents.find(
+          (doc) =>
+            doc.keyword.toLowerCase().trim().includes(searchTerm) ||
+            searchTerm.includes(doc.keyword.toLowerCase().trim())
         );
 
-        if (found) {
-          resultDiv.innerHTML = `
-            <strong>HERE IS YOUR DOCUMENT LINK:</strong> 
-            <a href="${found.link}" target="_blank">${found.link}</a>
-          `;
+        if (foundDocument) {
+          resultDiv.innerHTML = `✅ **DOCUMENT FOUND!** <br/>
+                                <strong>Keyword Match:</strong> ${foundDocument.keyword} <br/>
+                                <a href="${foundDocument.link}" target="_blank">View Document Link</a>`;
+          resultDiv.classList.add("success");
         } else {
-          resultDiv.innerHTML = `<span style="color: #721c24;">No document found for the keyword: "${searchTerm}".</span>`;
+          resultDiv.innerHTML = `❌ **No exact or partial document found** for: "${searchTerm}". Please try a different keyword.`;
+          resultDiv.classList.add("error");
         }
       }
-
-      // Initial state of the result div
-      document.addEventListener("DOMContentLoaded", () => {
-        // Assuming 'documents' is available from data.js
-        // Set an informative initial message
-        document.getElementById("result").innerHTML =
-          "Search for a document keyword or click an option above.";
-      });
     </script>
   </body>
 </html>
