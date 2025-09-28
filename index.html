@@ -210,43 +210,22 @@
       #result a:hover {
         text-decoration: underline;
       }
-    </style>
-  </head>
-  <body>
-    <!-- Centered Header Section -->
-    <div class="header-section">
-      <div class="main-title">Smart ChatBot</div>
-      <div class="sub-text">Click on the search icon below to get started.</div>
-    </div>
 
-    <!-- Floating Search Button with Popup Text -->
-    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 1000">
-      <!-- Popup text -->
-      <div
-        style="
-          position: absolute;
-          bottom: 80px;
-          right: 0;
-          background: white;
-          padding: 10px 15px;
-          border-radius: 10px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-          font-size: 14px;
-          color: #333;
-          white-space: nowrap;
-          animation: popUp 0.4s ease;
-        "
-      >
-        Hi, how can I help you?
-      </div>
+      /* Floating text bubble style */
+      .floating-popup-text {
+        position: absolute;
+        bottom: 80px;
+        right: 0;
+        background: white;
+        padding: 10px 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        font-size: 14px;
+        color: #333;
+        white-space: nowrap;
+        animation: popUp 0.4s ease;
+      }
 
-      <!-- Button -->
-      <button class="search-icon-btn" onclick="toggleSearchForm()">
-        <i class="fas fa-search"></i>
-      </button>
-    </div>
-
-    <style>
       @keyframes popUp {
         0% {
           opacity: 0;
@@ -258,8 +237,21 @@
         }
       }
     </style>
+  </head>
+  <body>
+    <div class="header-section">
+      <div class="main-title">Smart ChatBot</div>
+      <div class="sub-text">Click on the search icon below to get started.</div>
+    </div>
 
-    <!-- Popup Window -->
+    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 1000">
+      <div class="floating-popup-text">Hi, how can I help you?</div>
+
+      <button class="search-icon-btn" onclick="toggleSearchForm()">
+        <i class="fas fa-search"></i>
+      </button>
+    </div>
+
     <div class="search-form-container" id="searchFormContainer">
       <div class="popup-header">Smart ChatBot</div>
       <div class="popup-subtext">Hi, how can I help you?</div>
@@ -309,8 +301,10 @@
     </div>
 
     <script src="data.js"></script>
+
     <script>
       // Toggle popup
+      // Function to toggle the popup form
       function toggleSearchForm() {
         const form = document.getElementById("searchFormContainer");
         form.classList.toggle("show");
@@ -322,23 +316,23 @@
         }
       }
 
-      // Standard search
+      // 1. Standard search handler (calls the smart search)
       function searchDocument() {
         const input = document
           .getElementById("searchInput")
           .value.toLowerCase()
           .trim();
-        showResult(input);
+        smartSearch(input);
       }
 
-      // Search using keyword chip
+      // 2. Search using keyword chip handler (calls the smart search)
       function searchByKeyword(keyword) {
         document.getElementById("searchInput").value = keyword;
-        showResult(keyword.toLowerCase().trim());
+        smartSearch(keyword.toLowerCase().trim());
       }
 
-      // Display result
-      function showResult(searchTerm) {
+      // 3. --- SMART SCORE SEARCH (Handles Easy/Unproper Keywords) ---
+      function smartSearch(searchTerm) {
         const resultDiv = document.getElementById("result");
 
         if (!searchTerm) {
@@ -346,21 +340,51 @@
           return;
         }
 
-        const found = documents.find(
-          (doc) => doc.keyword.toLowerCase().trim() === searchTerm
-        );
+        // A. Clean and tokenize the user's input into relevant search terms
+        const searchWords = searchTerm
+          .split(/\s+|&/g) // Split by spaces or '&'
+          .filter((word) => word.length > 2) // Ignore short, often irrelevant words
+          .filter(
+            (word) =>
+              !["and", "the", "for", "to", "a", "of", "in", "is"].includes(word)
+          ); // Filter common "stop words"
 
-        if (found) {
+        // Use the original term if the input was too short or only stop words
+        const relevantTerms =
+          searchWords.length > 0 ? searchWords : [searchTerm];
+
+        // B. Score all documents based on how many relevant terms they match
+        const scoredDocuments = documents.map((doc) => {
+          let score = 0;
+          const docKeywordLower = doc.keyword.toLowerCase();
+
+          relevantTerms.forEach((term) => {
+            // Check if the document's keyword *contains* the user's term (Partial Match)
+            if (docKeywordLower.includes(term)) {
+              score++;
+            }
+          });
+
+          return { ...doc, score, originalKeyword: doc.keyword }; // Keep original keyword for display
+        });
+
+        // C. Find the best match by sorting by the highest score
+        scoredDocuments.sort((a, b) => b.score - a.score);
+
+        const bestMatch = scoredDocuments[0];
+
+        // D. Display Result (requires a score of at least 1 to be considered a match)
+        if (bestMatch && bestMatch.score > 0) {
           resultDiv.innerHTML = `
-            <strong>HERE IS YOUR DOCUMENT LINK:</strong>
-            <a href="${found.link}" target="_blank">${found.link}</a>
-          `;
+      <strong>BEST MATCH (${bestMatch.originalKeyword}):</strong>
+      <a href="${bestMatch.link}" target="_blank">${bestMatch.link}</a>
+    `;
         } else {
-          resultDiv.innerHTML = `<span style="color: #721c24;">No document found for the keyword: "${searchTerm}".</span>`;
+          resultDiv.innerHTML = `<span style="color: #721c24;">No relevant document found for: "${searchTerm}".</span>`;
         }
       }
 
-      // Default message
+      // Set initial message on load
       document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("result").innerHTML =
           "Search for a document keyword or click an option above.";
