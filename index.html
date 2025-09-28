@@ -331,7 +331,7 @@
         smartSearch(keyword.toLowerCase().trim());
       }
 
-      // 3. --- SMART SCORE SEARCH (Handles Easy/Unproper Keywords) ---
+      // --- SMART SCORE SEARCH (Removes Score Display) ---
       function smartSearch(searchTerm) {
         const resultDiv = document.getElementById("result");
 
@@ -341,31 +341,55 @@
         }
 
         // A. Clean and tokenize the user's input into relevant search terms
-        const searchWords = searchTerm
-          .split(/\s+|&/g) // Split by spaces or '&'
-          .filter((word) => word.length > 2) // Ignore short, often irrelevant words
+        const rawTerms = searchTerm.toLowerCase().trim();
+
+        // Split input into words, filtering out short/common "stop words"
+        const searchWords = rawTerms
+          .split(/\s+|&/g)
+          .filter((word) => word.length > 2)
+          // Crucial stop words for general relevance
           .filter(
             (word) =>
-              !["and", "the", "for", "to", "a", "of", "in", "is"].includes(word)
-          ); // Filter common "stop words"
+              ![
+                "and",
+                "the",
+                "for",
+                "to",
+                "a",
+                "of",
+                "in",
+                "is",
+                "procedure",
+              ].includes(word)
+          );
 
-        // Use the original term if the input was too short or only stop words
-        const relevantTerms =
-          searchWords.length > 0 ? searchWords : [searchTerm];
+        // Ensure we have at least one term to search with
+        const relevantTerms = searchWords.length > 0 ? searchWords : [rawTerms];
 
-        // B. Score all documents based on how many relevant terms they match
+        // B. Score all documents based on match type (Score is calculated but NOT displayed)
         const scoredDocuments = documents.map((doc) => {
           let score = 0;
           const docKeywordLower = doc.keyword.toLowerCase();
 
+          // 1. EXACT PHRASE BONUS: Highest score for an exact match (sub-string)
+          if (docKeywordLower.includes(rawTerms)) {
+            score += 100; // Large bonus for direct phrase match
+          }
+
+          // 2. MULTI-WORD MATCHING: Score based on individual word hits
           relevantTerms.forEach((term) => {
-            // Check if the document's keyword *contains* the user's term (Partial Match)
             if (docKeywordLower.includes(term)) {
-              score++;
+              score += 10; // Moderate bonus for a relevant word match
             }
           });
 
-          return { ...doc, score, originalKeyword: doc.keyword }; // Keep original keyword for display
+          // 3. Penalty for length mismatch (helps prioritize relevant results)
+          const lengthDifference = Math.abs(
+            docKeywordLower.length - rawTerms.length
+          );
+          score -= lengthDifference * 0.1;
+
+          return { ...doc, score, originalKeyword: doc.keyword };
         });
 
         // C. Find the best match by sorting by the highest score
@@ -373,17 +397,16 @@
 
         const bestMatch = scoredDocuments[0];
 
-        // D. Display Result (requires a score of at least 1 to be considered a match)
+        // D. Display Result (Removed the score from the HTML output)
         if (bestMatch && bestMatch.score > 0) {
           resultDiv.innerHTML = `
-      <strong>BEST MATCH (${bestMatch.originalKeyword}):</strong>
-      <a href="${bestMatch.link}" target="_blank">${bestMatch.link}</a>
-    `;
+            <strong>BEST MATCH (${bestMatch.originalKeyword}):</strong>
+            <a href="${bestMatch.link}" target="_blank">${bestMatch.link}</a>
+        `;
         } else {
           resultDiv.innerHTML = `<span style="color: #721c24;">No relevant document found for: "${searchTerm}".</span>`;
         }
       }
-
       // Set initial message on load
       document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("result").innerHTML =
