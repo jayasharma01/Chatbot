@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Smart Document Search Widget</title>
+    <title>Smart ChatBot</title>
 
     <link
       rel="stylesheet"
@@ -12,105 +12,79 @@
 
     <style>
       :root {
-        --primary-color: #007bff; /* Brighter Blue */
-        --background-color: #f7f9fc; /* Lighter background */
+        --primary-color: #4a90e2; /* Modern blue */
+        --secondary-color: #50e3c2; /* Accent color */
+        --background-color: #eef2f7; /* Soft light-blue/gray */
         --card-background: #ffffff;
-        --text-color: #333;
-        --border-radius: 16px; /* Slightly larger radius */
-        --shadow-elevation: 0 10px 30px rgba(0, 0, 0, 0.15); /* Stronger shadow */
-        --success-bg: #d4edda;
-        --success-border: #c3e6cb;
-        --success-text: #155724;
+        --text-color: #333333;
+        --border-radius: 12px;
+        --shadow-elevation: 0 6px 15px rgba(0, 0, 0, 0.1);
       }
 
       body {
-        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
         padding: 0;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
         background: var(--background-color);
-        height: 100vh;
+        min-height: 100vh;
+        color: var(--text-color);
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
+      }
+
+      /* --- Centered title --- */
+      .header-section {
         text-align: center;
-        color: var(--text-color);
+        margin-top: 40px;
+        margin-bottom: 30px;
       }
 
-      /* Centered intro text */
-      .center-text {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-
-      .center-text h1 {
-        font-size: 40px;
-        margin-bottom: 10px;
+      .main-title {
+        font-size: 2rem;
+        font-weight: bold;
         color: var(--primary-color);
-        font-weight: 600;
+        margin-bottom: 10px;
       }
 
-      .center-text p {
-        font-size: 18px;
-        color: #666;
-      }
-
-      /* Container for the button and its prompt text */
-      .floating-widget-container {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        z-index: 1000;
-      }
-
-      /* Styling for the text prompt */
-      .search-prompt {
-        background-color: var(--card-background);
-        color: var(--text-color);
-        padding: 10px 15px;
-        border-radius: 25px; /* Rounded pill shape */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        font-size: 15px;
-        font-weight: 500;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        transform-origin: right;
-        white-space: nowrap; /* Prevent text from wrapping */
+      .sub-text {
+        font-size: 1rem;
+        color: #555;
       }
 
       /* Floating search icon button */
       .search-icon-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
         background-color: var(--primary-color);
         color: white;
         border: none;
         border-radius: 50%;
         width: 65px;
         height: 65px;
-        font-size: 26px;
+        font-size: 28px;
         display: flex;
         justify-content: center;
         align-items: center;
         cursor: pointer;
-        box-shadow: 0 8px 15px rgba(0, 123, 255, 0.4);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 1000;
-      }
-
-      /* Hover effect: Hide the prompt when hovering near the button */
-      .floating-widget-container:hover .search-prompt {
-        opacity: 0;
-        transform: scale(0.9);
+        outline: none;
       }
 
       .search-icon-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 10px 20px rgba(0, 123, 255, 0.6);
+        background-color: #3b7ad6;
+        transform: translateY(-2px);
       }
 
-      /* Hidden popup form */
+      .search-icon-btn:active {
+        transform: scale(0.95);
+      }
+
+      /* Popup container */
       .search-form-container {
         position: fixed;
         bottom: 110px;
@@ -120,211 +94,235 @@
         border-radius: var(--border-radius);
         box-shadow: var(--shadow-elevation);
         display: none;
-        width: 340px;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        width: 320px;
+        transition: all 0.4s ease-in-out;
         z-index: 1000;
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(20px) scale(0.98);
+        transform-origin: bottom right;
       }
 
       .search-form-container.show {
         display: block;
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
 
+      /* Popup header */
+      .popup-header {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: var(--primary-color);
+        text-align: center;
+      }
+
+      .popup-subtext {
+        font-size: 14px;
+        color: #666;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      /* Input field */
       .search-form-container input {
         width: 100%;
-        padding: 12px;
-        margin-bottom: 15px;
+        padding: 12px 15px;
+        border: 1px solid #e0e0e0;
         border-radius: 8px;
-        border: 1px solid #ddd;
-        font-size: 16px;
+        margin-bottom: 15px;
         box-sizing: border-box;
+        font-size: 16px;
+        transition: border-color 0.3s;
       }
 
+      .search-form-container input:focus {
+        border-color: var(--primary-color);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+      }
+
+      /* Search button */
       .search-form-container button.search-btn {
         width: 100%;
         padding: 12px;
-        background-color: var(--primary-color);
+        background: var(--primary-color);
         color: white;
         border: none;
         border-radius: 8px;
         cursor: pointer;
         margin-bottom: 15px;
-        font-size: 17px;
+        font-size: 16px;
         font-weight: bold;
-        transition: background-color 0.2s ease;
+        transition: background 0.3s ease;
       }
 
       .search-form-container button.search-btn:hover {
-        background-color: #0056b3;
+        background: #3b7ad6;
       }
 
-      /* Option buttons */
-      .option-buttons {
+      /* Keyword chips */
+      .keyword-options {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
         margin-bottom: 15px;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 15px;
       }
 
-      .option-buttons button {
-        flex: 1 1 calc(50% - 5px);
-        padding: 8px 10px;
-        font-size: 14px;
-        border-radius: 20px;
-        border: 1px solid var(--primary-color);
-        background: white;
+      .keyword-btn {
+        background: #f7f9fc;
         color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
         cursor: pointer;
-        transition: 0.2s ease;
+        transition: all 0.2s ease;
+        white-space: nowrap;
       }
 
-      .option-buttons button:hover {
-        background-color: var(--primary-color);
+      .keyword-btn:hover {
+        background: var(--primary-color);
         color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
-      /* Result box - Success style for link */
+      /* Result box */
       #result {
         padding: 15px;
-        background: #fff3cd; /* Initial/Neutral background */
-        border: 1px solid #ffeeba;
+        background: #f0f8ff;
+        border: 1px solid #cfe2ff;
         border-radius: 8px;
-        font-size: 15px;
+        font-size: 14px;
+        line-height: 1.5;
         word-break: break-word;
-        text-align: left;
-        color: #856404;
-        line-height: 1.4;
-      }
-
-      #result.success {
-        background: var(--success-bg);
-        border: 1px solid var(--success-border);
-        color: var(--success-text);
-      }
-
-      #result.error {
-        background: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
       }
 
       #result a {
-        display: block;
-        margin-top: 8px;
-        color: #0056b3; /* Darker blue for links */
+        color: #004085;
         font-weight: bold;
-        text-decoration: underline;
-        word-break: break-all;
+        text-decoration: none;
+        display: block;
+        margin-top: 5px;
       }
 
-      #result.success a {
-        color: #0056b3; /* Use a standard link color for visibility even on green */
+      #result a:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
   <body>
-    <div class="center-text">
-      <h1>Smart ChatBot</h1>
-      <p>Quickly access files with a simple search.</p>
+    <!-- Centered Header Section -->
+    <div class="header-section">
+      <div class="main-title">Smart ChatBot</div>
+      <div class="sub-text">Click on the search icon below to get started.</div>
     </div>
 
-    <div class="floating-widget-container">
-      <div class="search-prompt">Hi, how can I help you?</div>
+    <!-- Floating Search Button with Popup Text -->
+    <div style="position: fixed; bottom: 30px; right: 30px; z-index: 1000">
+      <!-- Popup text -->
+      <div
+        style="
+          position: absolute;
+          bottom: 80px;
+          right: 0;
+          background: white;
+          padding: 10px 15px;
+          border-radius: 10px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+          font-size: 14px;
+          color: #333;
+          white-space: nowrap;
+          animation: popUp 0.4s ease;
+        "
+      >
+        Hi, how can I help you?
+      </div>
 
+      <!-- Button -->
       <button class="search-icon-btn" onclick="toggleSearchForm()">
         <i class="fas fa-search"></i>
       </button>
     </div>
 
+    <style>
+      @keyframes popUp {
+        0% {
+          opacity: 0;
+          transform: translateY(10px) scale(0.95);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+    </style>
+
+    <!-- Popup Window -->
     <div class="search-form-container" id="searchFormContainer">
+      <div class="popup-header">Smart ChatBot</div>
+      <div class="popup-subtext">Hi, how can I help you?</div>
+
       <input
         type="text"
         id="searchInput"
-        placeholder="Type keyword, e.g., 'design' or 'HRD'..."
+        placeholder="Enter document keyword..."
       />
       <button class="search-btn" onclick="searchDocument()">
-        <i class="fas fa-file-search"></i> Search Document
+        Search Document
       </button>
 
-      <div class="option-buttons">
-        <button onclick="selectKeyword('Marketing & Objective')">
+      <div class="keyword-options">
+        <div
+          class="keyword-btn"
+          onclick="searchByKeyword('Marketing & objective')"
+        >
           Marketing & Objective
-        </button>
-        <button onclick="selectKeyword('Objective & Design')">
+        </div>
+        <div
+          class="keyword-btn"
+          onclick="searchByKeyword('Objective & Design')"
+        >
           Objective & Design
-        </button>
-        <button onclick="selectKeyword('Objective Quality')">
+        </div>
+        <div class="keyword-btn" onclick="searchByKeyword('Objective quality')">
           Objective Quality
-        </button>
-        <button onclick="selectKeyword('Objective Material')">
+        </div>
+        <div
+          class="keyword-btn"
+          onclick="searchByKeyword('Objective material')"
+        >
           Objective Material
-        </button>
-        <button onclick="selectKeyword('Objective Store')">
+        </div>
+        <div class="keyword-btn" onclick="searchByKeyword('Objective Store')">
           Objective Store
-        </button>
-        <button onclick="selectKeyword('Objectives HRD')">
+        </div>
+        <div class="keyword-btn" onclick="searchByKeyword('Objectives HRD')">
           Objectives HRD
-        </button>
+        </div>
       </div>
 
       <div id="result">
-        Start by typing a keyword or selecting an option above.
+        Search for a document keyword or click an option above.
       </div>
     </div>
 
+    <script src="data.js"></script>
     <script>
-      // DUMMY documents array - Replace this with your actual data source (e.g., from data.js)
-      const documents = [
-        {
-          keyword: "Marketing & Objective",
-          link: "https://drive.google.com/file/d/1myTwnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
-        },
-        {
-          keyword: "Objective & Design",
-          link: "https://drive.google.com/file/d/2a2Twnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
-        },
-        {
-          keyword: "Objective Quality",
-          link: "https://drive.google.com/file/d/3b3Twnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
-        },
-        {
-          keyword: "Objective Material",
-          link: "https://drive.google.com/file/d/4c4Twnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
-        },
-        {
-          keyword: "Objective Store",
-          link: "https://drive.google.com/file/d/1myTwnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
-        },
-        {
-          keyword: "Objectives HRD",
-          link: "https://drive.google.com/file/d/6f6Twnh8M9XGop0Ccasby0t-b8YSW0QdR/view",
-        },
-      ];
-
-      /**
-       * Toggle form visibility
-       */
+      // Toggle popup
       function toggleSearchForm() {
         const form = document.getElementById("searchFormContainer");
         form.classList.toggle("show");
+
         if (!form.classList.contains("show")) {
-          // Reset form and result on close
           document.getElementById("searchInput").value = "";
-          const resultDiv = document.getElementById("result");
-          resultDiv.innerHTML =
-            "Start by typing a keyword or selecting an option above.";
-          resultDiv.className = ""; // Remove success/error classes
+          document.getElementById("result").innerHTML =
+            "Search for a document keyword or click an option above.";
         }
       }
 
-      /**
-       * Search using input field value
-       */
+      // Standard search
       function searchDocument() {
         const input = document
           .getElementById("searchInput")
@@ -333,45 +331,40 @@
         showResult(input);
       }
 
-      /**
-       * Search using option button value
-       */
-      function selectKeyword(keyword) {
+      // Search using keyword chip
+      function searchByKeyword(keyword) {
         document.getElementById("searchInput").value = keyword;
         showResult(keyword.toLowerCase().trim());
       }
 
-      /**
-       * Display search results with flexible matching logic
-       */
+      // Display result
       function showResult(searchTerm) {
         const resultDiv = document.getElementById("result");
-        resultDiv.className = ""; // Reset classes
 
         if (!searchTerm) {
-          resultDiv.innerHTML = "🚫 **Please enter a keyword to search.**";
-          resultDiv.classList.add("error");
+          resultDiv.innerHTML = `<span style="color: #856404;">Please enter a keyword to search.</span>`;
           return;
         }
 
-        // FLEXIBLE SEARCH LOGIC: Check if the document keyword includes the search term,
-        // OR if the search term includes the document keyword (in case of partial match)
-        const foundDocument = documents.find(
-          (doc) =>
-            doc.keyword.toLowerCase().trim().includes(searchTerm) ||
-            searchTerm.includes(doc.keyword.toLowerCase().trim())
+        const found = documents.find(
+          (doc) => doc.keyword.toLowerCase().trim() === searchTerm
         );
 
-        if (foundDocument) {
-          resultDiv.innerHTML = `✅ **DOCUMENT FOUND!** <br/>
-                                <strong>Keyword Match:</strong> ${foundDocument.keyword} <br/>
-                                <a href="${foundDocument.link}" target="_blank">View Document Link</a>`;
-          resultDiv.classList.add("success");
+        if (found) {
+          resultDiv.innerHTML = `
+            <strong>HERE IS YOUR DOCUMENT LINK:</strong>
+            <a href="${found.link}" target="_blank">${found.link}</a>
+          `;
         } else {
-          resultDiv.innerHTML = `❌ **No exact or partial document found** for: "${searchTerm}". Please try a different keyword.`;
-          resultDiv.classList.add("error");
+          resultDiv.innerHTML = `<span style="color: #721c24;">No document found for the keyword: "${searchTerm}".</span>`;
         }
       }
+
+      // Default message
+      document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("result").innerHTML =
+          "Search for a document keyword or click an option above.";
+      });
     </script>
   </body>
 </html>
