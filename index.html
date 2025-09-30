@@ -197,6 +197,10 @@
         font-size: 14px;
         line-height: 1.5;
         word-break: break-word;
+
+        /* --- ADD THESE TWO LINES --- */
+        max-height: 250px; /* Set a fixed height for the results area */
+        overflow-y: auto; /* Add a scrollbar when content exceeds max-height */
       }
 
       #result a {
@@ -265,36 +269,6 @@
         Search Document
       </button>
 
-      <div class="keyword-options">
-        <div
-          class="keyword-btn"
-          onclick="searchByKeyword('Marketing & objective')"
-        >
-          Marketing & Objective
-        </div>
-        <div
-          class="keyword-btn"
-          onclick="searchByKeyword('Objective & Design')"
-        >
-          Objective & Design
-        </div>
-        <div class="keyword-btn" onclick="searchByKeyword('Objective quality')">
-          Objective Quality
-        </div>
-        <div
-          class="keyword-btn"
-          onclick="searchByKeyword('Objective material')"
-        >
-          Objective Material
-        </div>
-        <div class="keyword-btn" onclick="searchByKeyword('Objective Store')">
-          Objective Store
-        </div>
-        <div class="keyword-btn" onclick="searchByKeyword('Objectives HRD')">
-          Objectives HRD
-        </div>
-      </div>
-
       <div id="result">
         Search for a document keyword or click an option above.
       </div>
@@ -331,7 +305,7 @@
         smartSearch(keyword.toLowerCase().trim());
       }
 
-      // --- SMART SCORE SEARCH (Removes Score Display) ---
+      // --- SMART SCORE SEARCH (Now returns multiple, ranked results) ---
       function smartSearch(searchTerm) {
         const resultDiv = document.getElementById("result");
 
@@ -343,11 +317,10 @@
         // A. Clean and tokenize the user's input into relevant search terms
         const rawTerms = searchTerm.toLowerCase().trim();
 
-        // Split input into words, filtering out short/common "stop words"
+        // Split input, filter out short/common "stop words"
         const searchWords = rawTerms
           .split(/\s+|&/g)
           .filter((word) => word.length > 2)
-          // Crucial stop words for general relevance
           .filter(
             (word) =>
               ![
@@ -363,23 +336,23 @@
               ].includes(word)
           );
 
-        // Ensure we have at least one term to search with
+        // Use the original term if the input was too short
         const relevantTerms = searchWords.length > 0 ? searchWords : [rawTerms];
 
-        // B. Score all documents based on match type (Score is calculated but NOT displayed)
+        // B. Score ALL documents
         const scoredDocuments = documents.map((doc) => {
           let score = 0;
           const docKeywordLower = doc.keyword.toLowerCase();
 
-          // 1. EXACT PHRASE BONUS: Highest score for an exact match (sub-string)
+          // 1. EXACT PHRASE BONUS: Large bonus for a full phrase match
           if (docKeywordLower.includes(rawTerms)) {
-            score += 100; // Large bonus for direct phrase match
+            score += 100;
           }
 
           // 2. MULTI-WORD MATCHING: Score based on individual word hits
           relevantTerms.forEach((term) => {
             if (docKeywordLower.includes(term)) {
-              score += 10; // Moderate bonus for a relevant word match
+              score += 10;
             }
           });
 
@@ -392,17 +365,32 @@
           return { ...doc, score, originalKeyword: doc.keyword };
         });
 
-        // C. Find the best match by sorting by the highest score
-        scoredDocuments.sort((a, b) => b.score - a.score);
+        // C. Filter for relevant results and sort by score
+        // We only keep documents that have a score greater than 0
+        const relevantMatches = scoredDocuments
+          .filter((doc) => doc.score > 0)
+          .sort((a, b) => b.score - a.score); // Sort highest score first
 
-        const bestMatch = scoredDocuments[0];
+        // D. Display Results
+        if (relevantMatches.length > 0) {
+          // Create an HTML string for all matches
+          let resultsHtml = "<strong>FOUND MULTIPLE MATCHES:</strong><br>";
 
-        // D. Display Result (Removed the score from the HTML output)
-        if (bestMatch && bestMatch.score > 0) {
-          resultDiv.innerHTML = `
-            <strong>BEST MATCH (${bestMatch.originalKeyword}):</strong>
-            <a href="${bestMatch.link}" target="_blank">${bestMatch.link}</a>
-        `;
+          relevantMatches.forEach((match, index) => {
+            // Display each result with a brief separator
+            resultsHtml += `
+                <div style="margin-top: 10px;">
+                    <a href="${match.link}" target="_blank">
+                        ${match.originalKeyword}
+                    </a>
+                    <small style="display: block; color: #555; font-size: 0.85em;">
+                        ${match.link}
+                    </small>
+                </div>
+            `;
+          });
+
+          resultDiv.innerHTML = resultsHtml;
         } else {
           resultDiv.innerHTML = `<span style="color: #721c24;">No relevant document found for: "${searchTerm}".</span>`;
         }
