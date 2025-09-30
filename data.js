@@ -764,7 +764,7 @@ const documents = [
   {
     keyword: "HRD-F,Trainer form and Training Attendance & Feedback",
     outputText: "HERE IS YOUR DOCUMENT LINK",
-    link: "https://drive.google.com/file/d/14A7JPzpg6Zw-5fZQH8cc-KcNogRWtCb_/view",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSe9x0lu2BTlvEie-Ox8Kqz2fY9H0Qf8BxcfLrwiT_qB0AsaeA/viewform",
   },
   {
     keyword: "HRD-F,Performance Appraisal Form.doc",
@@ -6627,3 +6627,4 @@ const documents = [
     link: "https://docs.google.com/forms/d/e/1FAIpQLSdprO0-uyAiV1pqAM4zjz2LGcWTOsY1t7l3lOL1a2rC8WqFng/viewform",
   },
 ];
+
