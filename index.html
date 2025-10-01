@@ -113,11 +113,41 @@
         transform: translateY(0) scale(1);
       }
 
+      /* --- NEW MEDIA QUERY FOR TABLET/MID-RANGE (551px to 800px) --- */
+      /* This addresses the issue when the screen is narrow but not quite mobile. */
+      @media (min-width: 551px) and (max-width: 800px) {
+        .search-form-container {
+          /* Keep it right-aligned, but make it smaller than the default 320px 
+               to ensure it fits and isn't pushed off by content. */
+          width: 300px;
+          /* To address the 'cutting off' issue, ensure there's enough space 
+               by potentially making the offset smaller. The default right: 30px 
+               should be fine, but increasing the bottom margin might help if 
+               the viewport is short. However, the screenshot shows a horizontal cut.
+               Let's ensure it doesn't try to occupy too much horizontal space. */
+        }
+      }
+
+      /* --- MEDIA QUERY FOR SMALLER MID-RANGE RESPONSIVENESS (501px to 550px) --- */
+      /* This addresses the issue when the screen is just above the mobile breakpoint (500px) */
+      @media (min-width: 501px) and (max-width: 550px) {
+        .search-form-container {
+          /* Use a percentage width and center it for better visibility in this very narrow range */
+          width: 90%;
+          right: 5%;
+          left: 5%;
+          transform-origin: bottom center;
+        }
+
+        .search-form-container.show {
+          transform: translateY(0) scale(1);
+        }
+      }
+
       /* --- MEDIA QUERY FOR MOBILE RESPONSIVENESS (Screen width up to 500px) --- */
-      /* --- MEDIA QUERY FOR MOBILE/TABLET RESPONSIVENESS (Screen width up to 600px) --- */
-      @media (max-width: 600px) {
+      @media (max-width: 500px) {
         .search-icon-btn {
-          /* Smaller button on mobile/tablet */
+          /* Smaller button on mobile */
           width: 55px;
           height: 55px;
           font-size: 24px;
@@ -126,7 +156,7 @@
         }
 
         .search-form-container {
-          /* Full-screen overlay for better mobile experience */
+          /* Full-screen overlay for a better mobile experience */
           top: 0;
           bottom: 0;
           left: 0;
@@ -134,25 +164,26 @@
           width: 100%;
           max-width: 100%;
           height: 100%;
-          max-height: 100vh; /* Prevent cutting on smaller heights */
-          overflow-y: auto; /* Allow scrolling if content is long */
           border-radius: 0; /* Remove border-radius for full screen */
           padding: 20px;
+          /* Adjust transition/transform for a full-screen slide-up effect */
           transform: translateY(100vh) scale(1);
           transform-origin: center center;
           transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-          box-sizing: border-box;
         }
 
         .search-form-container.show {
+          /* Reset transform for the full-screen view */
           transform: translateY(0) scale(1);
           opacity: 1;
         }
 
         #result {
+          /* Make result section fill more vertical space on mobile */
           flex-grow: 1;
-          max-height: calc(100vh - 250px);
-          overflow-y: auto;
+          max-height: calc(
+            100vh - 250px
+          ); /* Adjust max-height for mobile viewport */
         }
       }
 
