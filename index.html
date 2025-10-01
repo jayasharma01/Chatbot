@@ -161,7 +161,6 @@
     /* 👇 ADDED: Enable Flexbox for vertical management */
     display: flex;
     flex-direction: column;
-    /* 👆 ADDED */
     
     top: 0;
     bottom: 0;
@@ -169,7 +168,14 @@
     right: 0;
     width: 100%;
     max-width: 100%;
-    height: 100%;
+    
+    /* ❌ Remove height: 100% or change to min-height: 100vh if the content doesn't fit */
+    /* Since it's fixed/full screen, 100% is fine, but we MUST add overflow to it: */
+    height: 100%; 
+    
+    /* 👇 CRITICAL: Make the FULL CHATBOT SCROLLABLE on mobile */
+    overflow-y: auto; 
+    
     border-radius: 0; /* Remove border-radius for full screen */
     padding: 20px;
     /* Adjust transition/transform for a full-screen slide-up effect */
@@ -186,12 +192,15 @@
 
   #result {
     /* Make result section fill more vertical space on mobile */
+    /* flex-grow: 1 should handle the height for the rest of the available space */
     flex-grow: 1;
-    /* 👇 REMOVED the restrictive calc() for better flex behavior */
-    /* max-height: calc(100vh - 250px); */ 
     
-    /* 👇 CRITICAL FIX: Allows the flex item to scroll instead of pushing outside */
+    /* The main scrollbar is on the container, so this max-height isn't needed here. 
+       We only need min-height to enable flex scrolling. */
     min-height: 0; 
+    
+    /* Remove the restrictive calc() */
+    /* max-height: calc(100vh - 250px); */ 
   }
 }
 
@@ -525,4 +534,5 @@
     </script>
   </body>
 </html>
+
 
