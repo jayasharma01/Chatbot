@@ -3,6 +3,10 @@ const documents = [
     keyword: "AVG-M-01_Issue03_Rev.01 01 Sept 2025 Quality Manual.pdf",
     link: "https://drive.google.com/file/d/1H9sv24nIO0vbw_7tHZwRqoxtmxmghsRD/view",
   },
+   {
+    keyword: "Trainer Form",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSe9x0lu2BTlvEie-Ox8Kqz2fY9H0Qf8BxcfLrwiT_qB0AsaeA/viewform",
+  },
   {
     keyword: "SYS-P-01_Issue-02_Rev.02_05-Apr-2024_Management Review.pdf",
     link: "https://drive.google.com/file/d/1zcYBxCHPgToItQVuLhcXeX5DWdM1VOTA/view",
@@ -6691,3 +6695,4 @@ const documents = [
     link: "https://sites.google.com/d/1kRK1orfBM08H7EFBLLQRfUrnbQOvA-XP/p/1Qf3NYDeCvhYVtTQheNkEaZ1JcmjLC0Eb/edit",
   },
 ];
+
