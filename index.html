@@ -39,6 +39,10 @@
         text-align: center;
         margin-top: 40px;
         margin-bottom: 30px;
+        padding: 0 20px; /* Added padding for smaller screens */
+        max-width: 600px; /* Limit width on very large screens */
+        width: 100%;
+        box-sizing: border-box;
       }
 
       .main-title {
@@ -84,7 +88,7 @@
         transform: scale(0.95);
       }
 
-      /* Popup container */
+      /* Popup container (Default Desktop/Tablet size) */
       .search-form-container {
         position: fixed;
         bottom: 110px;
@@ -94,18 +98,62 @@
         border-radius: var(--border-radius);
         box-shadow: var(--shadow-elevation);
         display: none;
-        width: 320px;
+        width: 320px; /* Fixed width for larger screens */
         transition: all 0.4s ease-in-out;
         z-index: 1000;
         opacity: 0;
         transform: translateY(20px) scale(0.98);
         transform-origin: bottom right;
+        box-sizing: border-box; /* Include padding/border in the element's total width and height */
       }
 
       .search-form-container.show {
         display: block;
         opacity: 1;
         transform: translateY(0) scale(1);
+      }
+
+      /* --- MEDIA QUERY FOR MOBILE RESPONSIVENESS (Screen width up to 500px) --- */
+      @media (max-width: 500px) {
+        .search-icon-btn {
+          /* Smaller button on mobile */
+          width: 55px;
+          height: 55px;
+          font-size: 24px;
+          bottom: 20px;
+          right: 20px;
+        }
+
+        .search-form-container {
+          /* Full-screen overlay for a better mobile experience */
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 100%;
+          max-width: 100%;
+          height: 100%;
+          border-radius: 0; /* Remove border-radius for full screen */
+          padding: 20px;
+          /* Adjust transition/transform for a full-screen slide-up effect */
+          transform: translateY(100vh) scale(1);
+          transform-origin: center center;
+          transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .search-form-container.show {
+          /* Reset transform for the full-screen view */
+          transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+
+        #result {
+          /* Make result section fill more vertical space on mobile */
+          flex-grow: 1;
+          max-height: calc(
+            100vh - 250px
+          ); /* Adjust max-height for mobile viewport */
+        }
       }
 
       /* Popup header */
@@ -272,18 +320,41 @@
       <div id="result">
         Search for a document keyword or click an option above.
       </div>
+
+      <div
+        class="mobile-close-btn"
+        onclick="toggleSearchForm()"
+        style="
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          font-size: 24px;
+          cursor: pointer;
+          display: none; /* Hidden by default */
+          color: var(--primary-color);
+        "
+      >
+        <i class="fas fa-times"></i>
+      </div>
     </div>
 
     <script src="data.js"></script>
 
     <script>
       // Toggle popup
-      // Function to toggle the popup form
       function toggleSearchForm() {
         const form = document.getElementById("searchFormContainer");
         form.classList.toggle("show");
 
-        if (!form.classList.contains("show")) {
+        // Toggle the mobile close button visibility
+        const closeBtn = document.querySelector(".mobile-close-btn");
+        if (form.classList.contains("show")) {
+          // Check if it's mobile view to show the close button
+          if (window.matchMedia("(max-width: 500px)").matches) {
+            closeBtn.style.display = "block";
+          }
+        } else {
+          closeBtn.style.display = "none";
           document.getElementById("searchInput").value = "";
           document.getElementById("result").innerHTML =
             "Search for a document keyword or click an option above.";
@@ -395,6 +466,18 @@
           resultDiv.innerHTML = `<span style="color: #721c24;">No relevant document found for: "${searchTerm}".</span>`;
         }
       }
+
+      // Add event listener to hide the mobile close button on window resize
+      window.addEventListener("resize", () => {
+        const form = document.getElementById("searchFormContainer");
+        const closeBtn = document.querySelector(".mobile-close-btn");
+        if (window.matchMedia("(min-width: 501px)").matches) {
+          closeBtn.style.display = "none";
+        } else if (form.classList.contains("show")) {
+          closeBtn.style.display = "block";
+        }
+      });
+
       // Set initial message on load
       document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("result").innerHTML =
