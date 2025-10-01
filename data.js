@@ -4,6 +4,62 @@ const documents = [
     link: "https://drive.google.com/file/d/1H9sv24nIO0vbw_7tHZwRqoxtmxmghsRD/view",
   },
    {
+    keyword: "Request for change document (Noida)",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSeqwT6cmg97WMGxrS-EUV0zLp6kdgKsfp8Z_6jLl6PDdNVcsA/viewform",
+  },
+   {
+    keyword: "Request for closure (Noida)",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSeXNorUNxhoeV-5axJittWgVFuAmBSjm59ij0IFETmsYJHH7g/viewform",
+  },
+  {
+    keyword: "Request for closure (Gagret)",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLScm3J9HGNXXLdAQg8-rqTwVg1IiB04cke-0_E4oIR3Dpx2glA/viewform",
+  },
+  {
+    keyword: "Cheque Requisition",
+    link: "https://script.google.com/a/macros/advancevalves.com/s/AKfycbwSIRysULoEb8O66yUo4ChM-AXST5L4XnpgAT3wu7cMJCYmImO4_qqJWamQy0QTlg5D/exec",
+  },
+  {
+    keyword: "Loan Request",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSdCt_N48uj1bhW8g53WRX-L2u4CWN9bqicS4YnCVQ7VPTGybg/viewform",
+  },
+  {
+    keyword: "Re-Work Form (Noida)",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSe11fyEEfPz6D2xLCjjfMnlw97X2yLlWmEFeySzjlE0lTKH5Q/viewform?vc=0&c=0&w=1&flr=0",
+  },
+  {
+    keyword: "Re-Work Form (Gagret)",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSdIg7iJo3iIgR8Z_V2YEfbMDGNKch5okud7Q6WC9UdvL_qpxg/viewform",
+  },
+  {
+    keyword: "IT Service Request",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSfi3BdXPOZ93Kcfqn2Na4g3pZJBEzEuWeBRvr1zep7lEemBHQ/viewform",
+  },
+   {
+    keyword: "New Item Creation Request",
+    link: "https://script.google.com/a/macros/advancevalves.com/s/AKfycbyGvK58SMsyS0Tp5eB-LrRcTXZtOTbgOewocbgOxp_mWN3HV_bOrTJoLvXbGk86i5Q2/exec",
+  },
+  {
+    keyword: "Web finsys Issue Request",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSfi3BdXPOZ93Kcfqn2Na4g3pZJBEzEuWeBRvr1zep7lEemBHQ/viewform",
+  },
+  {
+    keyword: "Incident Register Form",
+    link: "https://script.google.com/a/macros/advancevalves.com/s/AKfycbwwxp2moMAbZE1rM_CeSaBO-clCtNZA7YoeK6Azu0AzgYVacg6w90NtU0L1zOzy4MzTag/exec",
+  },
+   {
+    keyword: "5S Score Form (Noida)",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSdXNwePP7YHXay8WWGzNTD4imHw2GLOyV9QnB4FvlnwjHNpHw/viewform",
+  },
+  {
+    keyword: "Technical Query Form",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSdrP2pwjYrc1I4_IeUEFxIKGctK58CwtJAkdtePILEve7CzEA/viewform",
+  },
+  {
+    keyword: "5S Score Form (Una)",
+    link: "https://docs.google.com/forms/d/e/1FAIpQLSdprO0-uyAiV1pqAM4zjz2LGcWTOsY1t7l3lOL1a2rC8WqFng/viewform",
+  },
+   {
     keyword: "Trainer Form",
     link: "https://docs.google.com/forms/d/e/1FAIpQLSe9x0lu2BTlvEie-Ox8Kqz2fY9H0Qf8BxcfLrwiT_qB0AsaeA/viewform",
   },
@@ -6695,4 +6751,5 @@ const documents = [
     link: "https://sites.google.com/d/1kRK1orfBM08H7EFBLLQRfUrnbQOvA-XP/p/1Qf3NYDeCvhYVtTQheNkEaZ1JcmjLC0Eb/edit",
   },
 ];
+
 
