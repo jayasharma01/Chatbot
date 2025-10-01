@@ -113,28 +113,11 @@
         transform: translateY(0) scale(1);
       }
 
-      /* --- NEW MEDIA QUERY FOR MID-RANGE RESPONSIVENESS (501px to 550px) --- */
-      /* This addresses the issue when the screen is just above the mobile breakpoint (500px) */
-      @media (min-width: 501px) and (max-width: 550px) {
-        .search-form-container {
-            /* Make the chatbot wider and centered for better visibility in this range */
-            width: 90%; /* Use percentage for responsiveness */
-            right: 5%; /* Center it by setting equal left/right margins/positioning */
-            left: 5%;
-            transform-origin: bottom center; /* Change origin to center bottom */
-        }
-
-        /* If the 'cut' is due to the popUp animation when the viewport is small, 
-           we can disable the transform on show, though the main issue is usually positioning. */
-        .search-form-container.show {
-             transform: translateY(0) scale(1);
-        }
-      }
-
       /* --- MEDIA QUERY FOR MOBILE RESPONSIVENESS (Screen width up to 500px) --- */
-      @media (max-width: 500px) {
+      /* --- MEDIA QUERY FOR MOBILE/TABLET RESPONSIVENESS (Screen width up to 600px) --- */
+      @media (max-width: 600px) {
         .search-icon-btn {
-          /* Smaller button on mobile */
+          /* Smaller button on mobile/tablet */
           width: 55px;
           height: 55px;
           font-size: 24px;
@@ -143,7 +126,7 @@
         }
 
         .search-form-container {
-          /* Full-screen overlay for a better mobile experience */
+          /* Full-screen overlay for better mobile experience */
           top: 0;
           bottom: 0;
           left: 0;
@@ -151,26 +134,25 @@
           width: 100%;
           max-width: 100%;
           height: 100%;
+          max-height: 100vh; /* Prevent cutting on smaller heights */
+          overflow-y: auto; /* Allow scrolling if content is long */
           border-radius: 0; /* Remove border-radius for full screen */
           padding: 20px;
-          /* Adjust transition/transform for a full-screen slide-up effect */
           transform: translateY(100vh) scale(1);
           transform-origin: center center;
           transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+          box-sizing: border-box;
         }
 
         .search-form-container.show {
-          /* Reset transform for the full-screen view */
           transform: translateY(0) scale(1);
           opacity: 1;
         }
 
         #result {
-          /* Make result section fill more vertical space on mobile */
           flex-grow: 1;
-          max-height: calc(
-            100vh - 250px
-          ); /* Adjust max-height for mobile viewport */
+          max-height: calc(100vh - 250px);
+          overflow-y: auto;
         }
       }
 
@@ -504,4 +486,3 @@
     </script>
   </body>
 </html>
-
