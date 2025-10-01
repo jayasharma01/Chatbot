@@ -113,6 +113,24 @@
         transform: translateY(0) scale(1);
       }
 
+      /* --- NEW MEDIA QUERY FOR MID-RANGE RESPONSIVENESS (501px to 550px) --- */
+      /* This addresses the issue when the screen is just above the mobile breakpoint (500px) */
+      @media (min-width: 501px) and (max-width: 550px) {
+        .search-form-container {
+            /* Make the chatbot wider and centered for better visibility in this range */
+            width: 90%; /* Use percentage for responsiveness */
+            right: 5%; /* Center it by setting equal left/right margins/positioning */
+            left: 5%;
+            transform-origin: bottom center; /* Change origin to center bottom */
+        }
+
+        /* If the 'cut' is due to the popUp animation when the viewport is small, 
+           we can disable the transform on show, though the main issue is usually positioning. */
+        .search-form-container.show {
+             transform: translateY(0) scale(1);
+        }
+      }
+
       /* --- MEDIA QUERY FOR MOBILE RESPONSIVENESS (Screen width up to 500px) --- */
       @media (max-width: 500px) {
         .search-icon-btn {
@@ -486,3 +504,4 @@
     </script>
   </body>
 </html>
+
