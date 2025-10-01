@@ -12,9 +12,9 @@
 
     <style>
       :root {
-        --primary-color: #4a90e2; /* Modern blue */
-        --secondary-color: #50e3c2; /* Accent color */
-        --background-color: #eef2f7; /* Soft light-blue/gray */
+        --primary-color: #4a90e2;
+        --secondary-color: #50e3c2;
+        --background-color: #eef2f7;
         --card-background: #ffffff;
         --text-color: #333333;
         --border-radius: 12px;
@@ -39,8 +39,8 @@
         text-align: center;
         margin-top: 40px;
         margin-bottom: 30px;
-        padding: 0 20px; /* Added padding for smaller screens */
-        max-width: 600px; /* Limit width on very large screens */
+        padding: 0 20px;
+        max-width: 600px;
         width: 100%;
         box-sizing: border-box;
       }
@@ -88,7 +88,7 @@
         transform: scale(0.95);
       }
 
-      /* Popup container (Default Desktop/Tablet size) */
+      /* Popup container (Desktop/Tablet size) */
       .search-form-container {
         position: fixed;
         bottom: 110px;
@@ -98,13 +98,15 @@
         border-radius: var(--border-radius);
         box-shadow: var(--shadow-elevation);
         display: none;
-        width: 320px; /* Fixed width for larger screens */
+        width: 420px;        /* Increased width */
+        height: 500px;       /* Increased height */
         transition: all 0.4s ease-in-out;
         z-index: 1000;
         opacity: 0;
         transform: translateY(20px) scale(0.98);
         transform-origin: bottom right;
-        box-sizing: border-box; /* Include padding/border in the element's total width and height */
+        box-sizing: border-box;
+        overflow-y: auto;
       }
 
       .search-form-container.show {
@@ -113,96 +115,51 @@
         transform: translateY(0) scale(1);
       }
 
-      /* --- NEW MEDIA QUERY FOR TABLET/MID-RANGE (551px to 800px) --- */
-      /* This addresses the issue when the screen is narrow but not quite mobile. */
-      @media (min-width: 551px) and (max-width: 800px) {
+      /* Tablet responsiveness */
+      @media (min-width: 501px) and (max-width: 900px) {
         .search-form-container {
-          /* Keep it right-aligned, but make it smaller than the default 320px 
-               to ensure it fits and isn't pushed off by content. */
-          width: 300px;
-          /* To address the 'cutting off' issue, ensure there's enough space 
-               by potentially making the offset smaller. The default right: 30px 
-               should be fine, but increasing the bottom margin might help if 
-               the viewport is short. However, the screenshot shows a horizontal cut.
-               Let's ensure it doesn't try to occupy too much horizontal space. */
+          width: 90%;
+          height: 70vh;
+          right: 5%;
+          bottom: 60px;
         }
       }
 
-      /* --- MEDIA QUERY FOR SMALLER MID-RANGE RESPONSIVENESS (501px to 550px) --- */
-      /* This addresses the issue when the screen is just above the mobile breakpoint (500px) */
-      @media (min-width: 501px) and (max-width: 550px) {
+      /* Mobile responsiveness */
+      @media (max-width: 500px) {
+        .search-icon-btn {
+          width: 55px;
+          height: 55px;
+          font-size: 24px;
+          bottom: 20px;
+          right: 20px;
+        }
+
         .search-form-container {
-          /* Use a percentage width and center it for better visibility in this very narrow range */
-          width: 90%;
-          right: 5%;
-          left: 5%;
-          transform-origin: bottom center;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 100%;
+          max-width: 100%;
+          height: 100%;
+          border-radius: 0;
+          padding: 20px;
+          transform: translateY(100vh) scale(1);
+          transform-origin: center center;
+          transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
 
         .search-form-container.show {
           transform: translateY(0) scale(1);
+          opacity: 1;
+        }
+
+        #result {
+          flex-grow: 1;
+          max-height: calc(100vh - 250px);
         }
       }
-
-      /* --- MEDIA QUERY FOR MOBILE RESPONSIVENESS (Screen width up to 500px) --- */
-      /* --- MEDIA QUERY FOR MOBILE RESPONSIVENESS (Screen width up to 500px) --- */
-@media (max-width: 500px) {
-  .search-icon-btn {
-    /* Smaller button on mobile */
-    width: 55px;
-    height: 55px;
-    font-size: 24px;
-    bottom: 20px;
-    right: 20px;
-  }
-
-  .search-form-container {
-    /* Full-screen overlay for a better mobile experience */
-    /* 👇 ADDED: Enable Flexbox for vertical management */
-    display: flex;
-    flex-direction: column;
-    
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 100%;
-    
-    /* ❌ Remove height: 100% or change to min-height: 100vh if the content doesn't fit */
-    /* Since it's fixed/full screen, 100% is fine, but we MUST add overflow to it: */
-    height: 100%; 
-    
-    /* 👇 CRITICAL: Make the FULL CHATBOT SCROLLABLE on mobile */
-    overflow-y: auto; 
-    
-    border-radius: 0; /* Remove border-radius for full screen */
-    padding: 20px;
-    /* Adjust transition/transform for a full-screen slide-up effect */
-    transform: translateY(100vh) scale(1);
-    transform-origin: center center;
-    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-  }
-
-  .search-form-container.show {
-    /* Reset transform for the full-screen view */
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-
-  #result {
-    /* Make result section fill more vertical space on mobile */
-    /* flex-grow: 1 should handle the height for the rest of the available space */
-    flex-grow: 1;
-    
-    /* The main scrollbar is on the container, so this max-height isn't needed here. 
-       We only need min-height to enable flex scrolling. */
-    min-height: 0; 
-    
-    /* Remove the restrictive calc() */
-    /* max-height: calc(100vh - 250px); */ 
-  }
-}
 
       /* Popup header */
       .popup-header {
@@ -257,47 +214,18 @@
         background: #3b7ad6;
       }
 
-      /* Keyword chips */
-      .keyword-options {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 15px;
-        border-top: 1px solid #f0f0f0;
-        padding-top: 15px;
-      }
-
-      .keyword-btn {
-        background: #f7f9fc;
-        color: var(--primary-color);
-        border: 1px solid var(--primary-color);
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 13px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        white-space: nowrap;
-      }
-
-      .keyword-btn:hover {
-        background: var(--primary-color);
-        color: white;
-      }
-
       /* Result box */
       #result {
-  padding: 15px;
-  background: #f0f8ff;
-  border: 1px solid #cfe2ff;
-  border-radius: 8px;
-  font-size: 14px;
-  line-height: 1.5;
-  word-break: break-word;
-
-  max-height: 250px; /* Set a fixed height for the results area */
-  overflow-y: auto; /* Add a scrollbar when content exceeds max-height */
-}
-
+        padding: 15px;
+        background: #f0f8ff;
+        border: 1px solid #cfe2ff;
+        border-radius: 8px;
+        font-size: 14px;
+        line-height: 1.5;
+        word-break: break-word;
+        max-height: 350px;  /* Larger scroll area */
+        overflow-y: auto;
+      }
 
       #result a {
         color: #004085;
@@ -378,7 +306,7 @@
           right: 15px;
           font-size: 24px;
           cursor: pointer;
-          display: none; /* Hidden by default */
+          display: none;
           color: var(--primary-color);
         "
       >
@@ -387,17 +315,13 @@
     </div>
 
     <script src="data.js"></script>
-
     <script>
-      // Toggle popup
       function toggleSearchForm() {
         const form = document.getElementById("searchFormContainer");
         form.classList.toggle("show");
 
-        // Toggle the mobile close button visibility
         const closeBtn = document.querySelector(".mobile-close-btn");
         if (form.classList.contains("show")) {
-          // Check if it's mobile view to show the close button
           if (window.matchMedia("(max-width: 500px)").matches) {
             closeBtn.style.display = "block";
           }
@@ -409,7 +333,6 @@
         }
       }
 
-      // 1. Standard search handler (calls the smart search)
       function searchDocument() {
         const input = document
           .getElementById("searchInput")
@@ -418,13 +341,11 @@
         smartSearch(input);
       }
 
-      // 2. Search using keyword chip handler (calls the smart search)
       function searchByKeyword(keyword) {
         document.getElementById("searchInput").value = keyword;
         smartSearch(keyword.toLowerCase().trim());
       }
 
-      // --- SMART SCORE SEARCH (Now returns multiple, ranked results) ---
       function smartSearch(searchTerm) {
         const resultDiv = document.getElementById("result");
 
@@ -433,49 +354,28 @@
           return;
         }
 
-        // A. Clean and tokenize the user's input into relevant search terms
         const rawTerms = searchTerm.toLowerCase().trim();
 
-        // Split input, filter out short/common "stop words"
         const searchWords = rawTerms
           .split(/\s+|&/g)
           .filter((word) => word.length > 2)
           .filter(
             (word) =>
-              ![
-                "and",
-                "the",
-                "for",
-                "to",
-                "a",
-                "of",
-                "in",
-                "is",
-                "procedure",
-              ].includes(word)
+              !["and", "the", "for", "to", "a", "of", "in", "is", "procedure"].includes(word)
           );
 
-        // Use the original term if the input was too short
         const relevantTerms = searchWords.length > 0 ? searchWords : [rawTerms];
 
-        // B. Score ALL documents
         const scoredDocuments = documents.map((doc) => {
           let score = 0;
           const docKeywordLower = doc.keyword.toLowerCase();
 
-          // 1. EXACT PHRASE BONUS: Large bonus for a full phrase match
-          if (docKeywordLower.includes(rawTerms)) {
-            score += 100;
-          }
+          if (docKeywordLower.includes(rawTerms)) score += 100;
 
-          // 2. MULTI-WORD MATCHING: Score based on individual word hits
           relevantTerms.forEach((term) => {
-            if (docKeywordLower.includes(term)) {
-              score += 10;
-            }
+            if (docKeywordLower.includes(term)) score += 10;
           });
 
-          // 3. Penalty for length mismatch (helps prioritize relevant results)
           const lengthDifference = Math.abs(
             docKeywordLower.length - rawTerms.length
           );
@@ -484,38 +384,29 @@
           return { ...doc, score, originalKeyword: doc.keyword };
         });
 
-        // C. Filter for relevant results and sort by score
-        // We only keep documents that have a score greater than 0
         const relevantMatches = scoredDocuments
           .filter((doc) => doc.score > 0)
-          .sort((a, b) => b.score - a.score); // Sort highest score first
+          .sort((a, b) => b.score - a.score);
 
-        // D. Display Results
         if (relevantMatches.length > 0) {
-          // Create an HTML string for all matches
           let resultsHtml = "<strong>FOUND MULTIPLE MATCHES:</strong><br>";
-
-          relevantMatches.forEach((match, index) => {
-            // Display each result with a brief separator
+          relevantMatches.forEach((match) => {
             resultsHtml += `
-                <div style="margin-top: 10px;">
-                    <a href="${match.link}" target="_blank">
-                        ${match.originalKeyword}
-                    </a>
-                    <small style="display: block; color: #555; font-size: 0.85em;">
-                        ${match.link}
-                    </small>
-                </div>
-            `;
+              <div style="margin-top: 10px;">
+                <a href="${match.link}" target="_blank">
+                  ${match.originalKeyword}
+                </a>
+                <small style="display: block; color: #555; font-size: 0.85em;">
+                  ${match.link}
+                </small>
+              </div>`;
           });
-
           resultDiv.innerHTML = resultsHtml;
         } else {
           resultDiv.innerHTML = `<span style="color: #721c24;">No relevant document found for: "${searchTerm}".</span>`;
         }
       }
 
-      // Add event listener to hide the mobile close button on window resize
       window.addEventListener("resize", () => {
         const form = document.getElementById("searchFormContainer");
         const closeBtn = document.querySelector(".mobile-close-btn");
@@ -526,7 +417,6 @@
         }
       });
 
-      // Set initial message on load
       document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("result").innerHTML =
           "Search for a document keyword or click an option above.";
@@ -534,5 +424,3 @@
     </script>
   </body>
 </html>
-
-
