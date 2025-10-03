@@ -916,11 +916,6 @@ const documents = [
   },
   {
     keyword:
-      "HRD-F-07 Issue-03 Rev.01_ 21-Jun-2025_Trainer form and Training Attendance & Feedback.pdf",
-    link: "https://drive.google.com/file/d/14A7JPzpg6Zw-5fZQH8cc-KcNogRWtCb_/view",
-  },
-  {
-    keyword:
       "HRD-F-08 Issue-03 Rev.00_12-Apr-2024_Performance Appraisal Form.doc",
     link: "https://drive.google.com/file/d/1OyE0EFJIfQRxep9rKxcUsQrCeESqa8Di/view",
   },
@@ -6085,10 +6080,6 @@ const documents = [
     link: "https://docs.google.com/forms/d/e/1FAIpQLSeM2bQk-qRs0L0tyqx1RzPfvbUpSJAg3iR2HKpjAusUPrUusg/viewform?vc=0&c=0&w=1&flr=0&gxids=7628",
   },
   {
-    keyword: "Training Feedback Form",
-    link: "https://docs.google.com/forms/d/1Gy_IGguFy4AAnTdMSqxhXkVmJY8zPI7-Sq9C_0X8xX8/edit",
-  },
-  {
     keyword: "Backup Strategy",
     link: "https://docs.google.com/a/advancevalves.com/spreadsheet/ccc?key=0ApibeLTjVmekdHprTjFUazlRRlR0UTJuQ1hKNUg5WGc&authkey=CO-EzfkG&authkey=CO-EzfkG#gid=0",
   },
@@ -6742,6 +6733,7 @@ const documents = [
     link: "https://sites.google.com/d/1kRK1orfBM08H7EFBLLQRfUrnbQOvA-XP/p/1Qf3NYDeCvhYVtTQheNkEaZ1JcmjLC0Eb/edit",
   },
 ];
+
 
 
 
