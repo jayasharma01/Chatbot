@@ -6733,11 +6733,11 @@ const documents = [
     link: "https://sites.google.com/d/1kRK1orfBM08H7EFBLLQRfUrnbQOvA-XP/p/1Qf3NYDeCvhYVtTQheNkEaZ1JcmjLC0Eb/edit",
   },
  {
-    keyword: "News Letter Issue 1",
+    keyword: "News Letter Issue 1 ( Advance Ki Digi Yatra )",
     link: "https://drive.google.com/file/d/1_A4YPJC5fd5j16nRTrLn5w17NmKlvNxw/view",
   },
   {
-    keyword: "News Letter Issue 2",
+    keyword: "News Letter Issue 2 ( Advance Ki Digi Yatra )",
     link: "https://drive.google.com/file/d/1-elcjhV6iF817XoD477xcZhwAUg8gANt/view",
   },
 ];
